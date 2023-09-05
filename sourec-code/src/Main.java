@@ -11,8 +11,8 @@ public class Main {
         do{
             System.out.println("1. Add a Book\n" +
                     "2. Show All Books\n" +
-                    "3. Show Book based on ISBN number \n" +
-                    "4. Update a Book\n" +
+                    "3. Search \n" +
+                    "4. Borrow a  Book\n" +
                     "5. Delete a Book");
             System.out.print("Enter your choice: ");
 
@@ -38,10 +38,21 @@ public class Main {
                     newBook.setAuthor(author);
                     newBook.setIsbn_number(isbn_number);
                     book.createBook(newBook);
-
                     break;
                 case 2:
                     book.showAllBooks();
+                    break;
+                case 3:
+                    System.out.print("Type the title or the author: ");
+                    String searchInput = scan.next();
+                    book.searchBooksByTitleOrAuthor(searchInput);
+                    break;
+                case 4:
+                    //borrow a book
+                    System.out.print("Enter the ISBN of the book you want to borrow: ");
+                    int isbn = scan.nextInt();
+                    //book.checkBookExists(isbn);
+                    book.borrowBook(isbn);
                     break;
                 case 0:
                     System.out.println("Exiting the program.");
