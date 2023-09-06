@@ -199,5 +199,84 @@ public class BookImp {
         }
     }
 
+    // return a book
+    public void returnBook(int isbn){
+        boolean check = checkBookExists(isbn);
+        if (check != true){
+            System.out.println("Book does not exist");
+        }else{
+            // get status of the book
+            Connection con = DBConnection.createDBConnection();
+            if(con != null){
+                String query = "SELECT status_id, id FROM books WHERE books.isbn_number = ?";
+                try {
+                    PreparedStatement preparedStatement = con.prepareStatement(query);
+                    preparedStatement.setInt(1, isbn);
+                    ResultSet resultSet = preparedStatement.executeQuery();
+                    if (resultSet.next()) {
+                        int status = resultSet.getInt("status_id");
+                        if (status == 2){
+
+                            Loan loan = new Loan();
+                            LoanImp newLoan = new LoanImp();
+
+                            // get id
+                            int loanId = newLoan.getIdOfLoan(resultSet.getInt("id"));
+
+                            if( loanId == 0){
+                                System.out.printf("something is wrong");
+                            }else {
+                                // update status of the book
+                                String updateQuery = "UPDATE books SET status_id = 1 WHERE isbn_number = ?";
+                                PreparedStatement updateStatement = con.prepareStatement(updateQuery);
+                                updateStatement.setInt(1, isbn);
+                                updateStatement.executeUpdate();
+                                // update loan
+                                loan.setReturned(1);
+                                loan.setId(loanId);
+                                newLoan.updateLoan(loan);
+                            }
+                            System.out.println("Book returned successfully");
+
+                        }else{
+                            System.out.println("Book is not borrowed");
+                        }
+                    }
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    // show borrowed books
+    public void showBorrowedBooks(){
+        Connection con = DBConnection.createDBConnection();
+        if(con != null){
+            String query = "SELECT loans.*, books.title as book_title, books.author as b_author, books.isbn_number as b_isbn FROM loans INNER JOIN books on loans.book_id = books.id WHERE loans.returned = 0";
+            try {
+                PreparedStatement preparedStatement = con.prepareStatement(query);
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                // check if result set is empty
+                if (!resultSet.isBeforeFirst()) {
+                    System.out.println("No borrowed books");
+                }else {
+                    System.out.println("Borrowed books: \n");
+                    while (resultSet.next()) {
+                        System.out.println("Book Title: " + resultSet.getString("book_title"));
+                        System.out.println("Book Author: " + resultSet.getString("b_author"));
+                        System.out.println("Book ISBN: " + resultSet.getInt("b_isbn"));
+                        System.out.println("Name of borrower: " + resultSet.getString("name"));
+                        System.out.println("Phone of borrower : " + resultSet.getString("phone"));
+                        System.out.println();
+                    }
+                }
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
+
 
 }

@@ -13,7 +13,8 @@ public class Main {
                     "2. Show All Books\n" +
                     "3. Search \n" +
                     "4. Borrow a  Book\n" +
-                    "5. Delete a Book");
+                    "5. Return a Book\n" +
+                    "6. Show Borrowed Books\n");
             System.out.print("Enter your choice: ");
 
             int choice = scan.nextInt();
@@ -53,6 +54,16 @@ public class Main {
                     int isbn = scan.nextInt();
                     //book.checkBookExists(isbn);
                     book.borrowBook(isbn);
+                    break;
+                case 5:
+                    // return a book
+                    System.out.print("Enter the ISBN of the book you want to return: ");
+                    int isbnReturn = scan.nextInt();
+                    book.returnBook(isbnReturn);
+                    break;
+                case 6:
+                    // show borrowed books
+                    book.showBorrowedBooks();
                     break;
                 case 0:
                     System.out.println("Exiting the program.");
