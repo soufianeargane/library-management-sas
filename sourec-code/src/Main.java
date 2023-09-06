@@ -17,7 +17,9 @@ public class Main {
                     "6. Show Borrowed Books\n" +
                     "7. delete a book\n" +
                     "8. update a book\n" +
-                    "0. Exit");
+                    "9. Declare a book as lost\n" +
+                    "0. Exit"
+            );
             System.out.print("Enter your choice: ");
 
             int choice = scan.nextInt();
@@ -95,6 +97,12 @@ public class Main {
                         book.updateBook(updateBook);
                     }
 
+                    break;
+                case 9:
+                    // declare a book as lost
+                    System.out.print("Enter the ISBN of the book you want to declare as lost: ");
+                    int isbnLost = scan.nextInt();
+                    book.lostBook(isbnLost);
                     break;
                 case 0:
                     System.out.println("Exiting the program.");
