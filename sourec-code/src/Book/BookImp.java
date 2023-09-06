@@ -2,6 +2,8 @@ package Book;
 import database.DBConnection;
 import Loan.Loan;
 import Loan.LoanImp;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -361,6 +363,55 @@ public class BookImp {
             }
         }
 
+    }
+
+    public void showStats(){
+        int available = countBooks(1);
+        int borrowed = countBooks(2);
+        int lost = countBooks(3);
+
+        try {
+            saveStatisticsToFile(available, borrowed, lost);
+        } catch (IOException e) {
+            e.printStackTrace(); // Handle the exception here
+        }
+
+        System.out.println("");
+        System.out.println("Available books: " + available);
+        System.out.println("Borrowed books: " + borrowed);
+        System.out.println("Lost books: " + lost);
+        System.out.println("");
+
+    }
+    public int countBooks(int status){
+        Connection con = DBConnection.createDBConnection();
+        if(con != null){
+            String query = "SELECT COUNT(*) FROM books WHERE status_id = ? AND deleted_at IS NULL";
+            try {
+                PreparedStatement preparedStatement = con.prepareStatement(query);
+                preparedStatement.setInt(1, status);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    return resultSet.getInt(1);
+                }
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+        return 0;
+    }
+
+    public static void saveStatisticsToFile(int available, int borrowed, int lost) throws IOException {
+        FileWriter writer = new FileWriter("book_statistics.txt");
+
+        writer.write("Statistics:\n");
+        writer.write("Available Books: " + available + "\n");
+        writer.write("Borrowed Books: " + borrowed + "\n");
+        writer.write("Lost Books: " + lost + "\n");
+
+        writer.close();
+
+        System.out.println("Statistics saved to 'book_statistics.txt'");
     }
 }
 

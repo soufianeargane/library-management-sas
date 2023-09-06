@@ -1,0 +1,4 @@
+Statistics:
+Available Books: 1
+Borrowed Books: 0
+Lost Books: 1
