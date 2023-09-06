@@ -14,7 +14,10 @@ public class Main {
                     "3. Search \n" +
                     "4. Borrow a  Book\n" +
                     "5. Return a Book\n" +
-                    "6. Show Borrowed Books\n");
+                    "6. Show Borrowed Books\n" +
+                    "7. delete a book\n" +
+                    "8. update a book\n" +
+                    "0. Exit");
             System.out.print("Enter your choice: ");
 
             int choice = scan.nextInt();
@@ -45,7 +48,7 @@ public class Main {
                     break;
                 case 3:
                     System.out.print("Type the title or the author: ");
-                    String searchInput = scan.next();
+                    String searchInput = scan.next().trim();
                     book.searchBooksByTitleOrAuthor(searchInput);
                     break;
                 case 4:
@@ -64,6 +67,34 @@ public class Main {
                 case 6:
                     // show borrowed books
                     book.showBorrowedBooks();
+                    break;
+                case 7:
+                    // delete a book
+                    System.out.print("Enter the ISBN of the book you want to delete: ");
+                    int isbnDelete = scan.nextInt();
+                    book.deleteBook(isbnDelete);
+                    break;
+                case 8:
+                    // update a book
+                    System.out.print("Enter the ISBN of the book you want to update: ");
+                    int isbnUpdate = scan.nextInt();
+                    // check if the book exists
+                    check = book.checkBookExists(isbnUpdate);
+                    if(check != true){
+                        System.out.println("Book does not exist.");
+                    }else {
+                        System.out.print("Enter the new title of the book: ");
+                        String titleUpdate = scan.next().trim();
+                        System.out.print("\nEnter the new author of the book: ");
+                        String authorUpdate = scan.next().trim();
+                        // create a new book object
+                        Book updateBook = new Book();
+                        updateBook.setTitle(titleUpdate);
+                        updateBook.setAuthor(authorUpdate);
+                        updateBook.setIsbn_number(isbnUpdate);
+                        book.updateBook(updateBook);
+                    }
+
                     break;
                 case 0:
                     System.out.println("Exiting the program.");

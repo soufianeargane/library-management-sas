@@ -17,7 +17,7 @@ public class BookImp {
         Connection con = DBConnection.createDBConnection();
         if (con != null) {
             try  {
-                String query = "SELECT COUNT(*) FROM books WHERE isbn_number = ?";
+                String query = "SELECT COUNT(*) FROM books WHERE isbn_number = ? AND deleted_at IS NULL";
                 PreparedStatement preparedStatement = con.prepareStatement(query);
                 preparedStatement.setInt(1, parameterValue);
                 ResultSet resultSet = preparedStatement.executeQuery();
@@ -66,7 +66,8 @@ public class BookImp {
 
         Connection con = DBConnection.createDBConnection();
         if(con != null){
-            String query = "SELECT books.*, statuses.name AS status_name FROM books INNER JOIN statuses ON books.status_id = statuses.id;";
+            String query = "SELECT books.*, statuses.name AS status_name FROM books INNER JOIN statuses ON books.status_id = statuses.id" +
+                    " WHERE books.deleted_at IS NULL";
             try {
                 PreparedStatement preparedStatement = con.prepareStatement(query);
                 ResultSet resultSet = preparedStatement.executeQuery();
@@ -100,7 +101,8 @@ public class BookImp {
             String query = "SELECT books.*, statuses.name AS status_name " +
                     "FROM books " +
                     "INNER JOIN statuses ON books.status_id = statuses.id " +
-                    "WHERE books.title LIKE ? OR books.author LIKE ?;";
+                    "WHERE books.title LIKE ? OR books.author LIKE ? " +"" +
+                    "AND books.deleted_at IS NULL";
 
             try {
                 PreparedStatement preparedStatement = con.prepareStatement(query);
@@ -121,8 +123,6 @@ public class BookImp {
                         String author = resultSet.getString("author");
                         String status = resultSet.getString("status_name");
 
-                        // You can perform actions with the retrieved book data here
-                        // For example, you can print the book details
                         System.out.println("Book ID: " + bookId);
                         System.out.println("Title: " + title);
                         System.out.println("Author: " + author);
@@ -155,7 +155,7 @@ public class BookImp {
             // get status of the book
             Connection con = DBConnection.createDBConnection();
             if(con != null){
-                String query = "SELECT status_id, id FROM books WHERE books.isbn_number = ?";
+                String query = "SELECT status_id, id FROM books WHERE books.isbn_number = ?" + " AND books.deleted_at IS NULL";
                 try {
                     PreparedStatement preparedStatement = con.prepareStatement(query);
                     preparedStatement.setInt(1, isbn);
@@ -191,6 +191,9 @@ public class BookImp {
                         }else{
                             System.out.println("Book is not available");
                         }
+                    }
+                    else {
+                        System.out.println("Book does not exist");
                     }
                 }catch (SQLException e){
                     e.printStackTrace();
@@ -242,6 +245,9 @@ public class BookImp {
                             System.out.println("Book is not borrowed");
                         }
                     }
+                    else {
+                        System.out.println("Book does not exist");
+                    }
                 }catch (SQLException e){
                     e.printStackTrace();
                 }
@@ -253,7 +259,8 @@ public class BookImp {
     public void showBorrowedBooks(){
         Connection con = DBConnection.createDBConnection();
         if(con != null){
-            String query = "SELECT loans.*, books.title as book_title, books.author as b_author, books.isbn_number as b_isbn FROM loans INNER JOIN books on loans.book_id = books.id WHERE loans.returned = 0";
+            String query = "SELECT loans.*, books.title as book_title, books.author as b_author, books.isbn_number as b_isbn FROM loans INNER JOIN books on loans.book_id = books.id WHERE loans.returned = 0"
+                    + " AND books.deleted_at IS NULL";
             try {
                 PreparedStatement preparedStatement = con.prepareStatement(query);
                 ResultSet resultSet = preparedStatement.executeQuery();
@@ -269,6 +276,8 @@ public class BookImp {
                         System.out.println("Book ISBN: " + resultSet.getInt("b_isbn"));
                         System.out.println("Name of borrower: " + resultSet.getString("name"));
                         System.out.println("Phone of borrower : " + resultSet.getString("phone"));
+                        System.out.printf("Date borrowed: %s\n", resultSet.getDate("date"));
+                        System.out.printf("Time borrowed: %s\n", resultSet.getTime("date"));
                         System.out.println();
                     }
                 }
@@ -278,5 +287,53 @@ public class BookImp {
         }
     }
 
+    // delete a book
+    public void deleteBook(int isbn){
+        boolean check = checkBookExists(isbn);
+        if (check != true){
+            System.out.println("Book does not exist");
+        }else{
+            // get status of the book
+            Connection con = DBConnection.createDBConnection();
+            if(con != null){
+                // set deleted_at to now
+                java.util.Date date = new java.util.Date();
+                String query = "UPDATE books SET deleted_at = ? WHERE isbn_number = ?";
+                try {
+                    PreparedStatement preparedStatement = con.prepareStatement(query);
+                    preparedStatement.setDate(1, new java.sql.Date(date.getTime()));
+                    preparedStatement.setInt(2, isbn);
+                    preparedStatement.executeUpdate();
+                    System.out.println("Book deleted successfully");
+                }catch (SQLException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void updateBook(Book updateBook){
+        Connection con = DBConnection.createDBConnection();
+        if (con != null){
+            String query = "UPDATE `books` SET `title`=?,`author`=? WHERE `isbn_number`=?";
+            try {
+                PreparedStatement preparedStatement = con.prepareStatement(query);
+                preparedStatement.setString(1, updateBook.getTitle());
+                preparedStatement.setString(2, updateBook.getAuthor());
+                preparedStatement.setInt(3, updateBook.getIsbn_number());
+                int count = preparedStatement.executeUpdate();
+                if(count != 0){
+                    System.out.println("Book Updated Successfully");
+                }else{
+                    System.out.println("Something went wrong");
+                }
+            }catch (SQLException e){
+                e.printStackTrace();
+            }
+        }
+    }
 
 }
+
+
+
