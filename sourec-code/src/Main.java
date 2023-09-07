@@ -1,5 +1,7 @@
 import Book.Book;
 import Book.BookImp;
+
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -17,7 +19,7 @@ public class Main {
                     "6. Show Borrowed Books\n" +
                     "7. delete a book\n" +
                     "8. update a book\n" +
-                    "9. Declare a book as lost\n" +
+                    "9. Check for lost books\n" +
                     "10. Show Stats\n" +
                     "0. Exit"
             );
@@ -101,9 +103,19 @@ public class Main {
                     break;
                 case 9:
                     // declare a book as lost
-                    System.out.print("Enter the ISBN of the book you want to declare as lost: ");
-                    int isbnLost = scan.nextInt();
-                    book.lostBook(isbnLost);
+                    // System.out.print("Enter the ISBN of the book you want to declare as lost: ");
+                    //int isbnLost = scan.nextInt();
+                    //book.lostBook(isbnLost);
+                    List<Book> borrowedBooks = book.getLostBooks();
+                    if(borrowedBooks.isEmpty()){
+                        System.out.println("No books have been declared as lost.");
+                    }else {
+                        book.updateBooksStatusToLost(borrowedBooks);
+                        System.out.println();
+                        System.out.println("The following books have been declared as lost:");
+                        System.out.println();
+                    }
+
                     break;
                 case 10:
                     // show stats

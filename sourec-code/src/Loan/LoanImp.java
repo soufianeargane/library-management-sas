@@ -5,6 +5,7 @@ import database.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 
 public class LoanImp {
     public void insertLoan(Loan loan) {
@@ -17,7 +18,9 @@ public class LoanImp {
                 preparedStatement.setString(1, loan.getName());
                 preparedStatement.setString(2, loan.getPhone());
                 preparedStatement.setInt(3, loan.getBook_id());
-                preparedStatement.setDate(4, new java.sql.Date(loan.getDate().getTime()));
+                // Use java.sql.Timestamp to insert date and time
+                Timestamp timestamp = new Timestamp(loan.getDate().getTime());
+                preparedStatement.setTimestamp(4, timestamp);
                 preparedStatement.executeUpdate();
             } catch (Exception e) {
                 e.printStackTrace();

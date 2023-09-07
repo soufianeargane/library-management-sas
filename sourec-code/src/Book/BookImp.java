@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class BookImp {
@@ -412,6 +414,71 @@ public class BookImp {
         writer.close();
 
         System.out.println("Statistics saved to 'book_statistics.txt'");
+    }
+
+    public List<Book> getLostBooks() {
+
+        Connection connection = DBConnection.createDBConnection();
+        List<Book> books = new ArrayList<>();
+
+        if (connection != null) {
+            try {
+                // Construct the SQL query
+                String query = "SELECT books.* FROM books INNER JOIN loans ON books.id = loans.book_id WHERE loans.date <= DATE_SUB(NOW(), INTERVAL 5 MINUTE) AND loans.returned = 0";
+
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+                // Execute the query
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                // Process the results and add them to the books list
+                while (resultSet.next()) {
+                    int bookId = resultSet.getInt("id");
+                    String title = resultSet.getString("title");
+                    String author = resultSet.getString("author");
+                    int isbn = resultSet.getInt("isbn_number");
+                    // Add more book attributes as needed
+
+                    // Create a Book object and add it to the list
+                    Book book = new Book();
+                    book.setId(bookId);
+                    book.setTitle(title);
+                    book.setAuthor(author);
+                    book.setIsbn_number(isbn);
+                    books.add(book);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return books;
+    }
+
+    public void updateBooksStatusToLost(List<Book> books) {
+
+        Connection connection = DBConnection.createDBConnection();
+
+        if (connection != null) {
+            try {
+                // Construct the SQL query
+                String query = "UPDATE books SET status_id = 3 WHERE id IN (";
+                for (int i = 0; i < books.size(); i++) {
+                    if (i > 0) {
+                        query += ", ";
+                    }
+                    query += books.get(i).getId();
+                }
+                query += ")";
+
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+                // Execute the query
+                preparedStatement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

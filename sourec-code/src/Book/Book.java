@@ -10,6 +10,8 @@ public class Book {
     private int status_id;
     private Date deleted_at;
 
+
+
     public String getTitle() {
         return this.title;
     }
@@ -24,6 +26,14 @@ public class Book {
 
     public void setAuthor(String author) {
         this.author = author;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getIsbn_number() {

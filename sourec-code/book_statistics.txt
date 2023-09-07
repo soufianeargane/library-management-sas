@@ -1,4 +1,4 @@
 Statistics:
-Available Books: 1
+Available Books: 0
 Borrowed Books: 0
-Lost Books: 1
+Lost Books: 2
