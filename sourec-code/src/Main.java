@@ -1,5 +1,6 @@
 import Book.Book;
 import Book.BookImp;
+import lost_log.LostLogImp;
 
 import java.util.List;
 import java.util.Scanner;
@@ -112,14 +113,16 @@ public class Main {
                     }else {
                         book.updateBooksStatusToLost(borrowedBooks);
                         System.out.println();
-                        System.out.println("The following books have been declared as lost:");
-                        System.out.println();
                     }
 
                     break;
                 case 10:
                     // show stats
                     book.showStats();
+                    LostLogImp lostLogImp = new LostLogImp();
+                    lostLogImp.saveLostBooksToFile();
+                    System.out.println();
+                    System.out.println("Lost books have been saved to lost_books.txt");
                     break;
                 case 0:
                     System.out.println("Exiting the program.");

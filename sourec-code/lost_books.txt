@@ -1,0 +1,18 @@
+Lost Books are:
+
+Book ISBN: 8888
+Book Title: newbook
+Book Author: nihad
+Borrower Name: ilyass
+Borrower Phone: 6473645
+Log Timestamp: 2023-09-07
+
+Lost Books are:
+
+Book ISBN: 1234
+Book Title: ISSAM
+Book Author: ISSSS
+Borrower Name: abdo
+Borrower Phone: 6758546
+Log Timestamp: 2023-09-07
+
