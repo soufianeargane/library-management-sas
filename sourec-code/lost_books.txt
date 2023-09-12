@@ -16,3 +16,12 @@ Borrower Name: abdo
 Borrower Phone: 6758546
 Log Timestamp: 2023-09-07
 
+Lost Books are:
+
+Book ISBN: 500
+Book Title: harry
+Book Author: js.rowling
+Borrower Name: said
+Borrower Phone: 9696433
+Log Timestamp: 2023-09-08
+

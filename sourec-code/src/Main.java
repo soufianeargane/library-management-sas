@@ -7,6 +7,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        System.out.println();
         System.out.println("Welcome to your Book management application");
         BookImp book = new BookImp();
         Scanner scan = new Scanner(System.in);
@@ -35,13 +36,17 @@ public class Main {
                     System.out.print("\nEnter the author of the book: ");
                     String author = scan.next().trim();
                     System.out.print("\nEnter the ISBN of the book: ");
+                    if( title == null || author == null){
+                        System.out.println("Please enter a valid input.");
+                        break;
+                    }
                     int isbn_number = 0;
                     do {
                         isbn_number = scan.nextInt();
                         check = book.validateIsbn(isbn_number);
                         if(check != true){
                             System.out.println("ISBN is already used. Please enter a different one.");
-                            System.out.print("Enter the ISBN of the book: ");
+                            System.out.print("Enter an other ISBN of the book: ");
                         }
                     }while (check != true);
                     newBook.setTitle(title);
@@ -61,7 +66,6 @@ public class Main {
                     //borrow a book
                     System.out.print("Enter the ISBN of the book you want to borrow: ");
                     int isbn = scan.nextInt();
-                    //book.checkBookExists(isbn);
                     book.borrowBook(isbn);
                     break;
                 case 5:
@@ -103,15 +107,13 @@ public class Main {
 
                     break;
                 case 9:
-                    // declare a book as lost
-                    // System.out.print("Enter the ISBN of the book you want to declare as lost: ");
-                    //int isbnLost = scan.nextInt();
-                    //book.lostBook(isbnLost);
                     List<Book> borrowedBooks = book.getLostBooks();
                     if(borrowedBooks.isEmpty()){
                         System.out.println("No books have been declared as lost.");
                     }else {
                         book.updateBooksStatusToLost(borrowedBooks);
+                        System.out.println();
+                        System.out.println("The lost books have been added to the lost_books.text File");
                         System.out.println();
                     }
 
